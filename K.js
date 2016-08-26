@@ -1,5 +1,4 @@
-
-        ;(function(){
+;(function(){
             var version = '1.0.0',
                     KQ = function(selector){
                         return new KQ.fn.init(selector)
@@ -62,6 +61,68 @@
                     }
                     function rotateName(temp){
                        return temp.replace(/-(\w{1})/,function(){return arguments[1].toUpperCase()})
+                    }
+                },
+                ajax : function(temp) {
+                    for (var i in temp) {
+                        switch (i) {
+                            case "type":
+                                var type = temp[i];
+                                break;
+                            case "data":
+                                var data = temp[i];
+                                break;
+                            case "url":
+                                var url = temp[i];
+                                break;
+                            case "async":
+                                var async = temp[i];
+                                break;
+                            case  "success":
+                                var fn = temp[i];
+                                break;
+                            case  "error":
+                                var erfn = temp[i];
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    var xmlHttp;
+                    function createxmlHttpRequest() {
+                        if (window.ActiveXObject) {
+                            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+                        } else if (window.XMLHttpRequest) {
+                            xmlHttp = new XMLHttpRequest();
+                        }
+                    }
+                    if(type ==="get"){
+                        createxmlHttpRequest();
+                        if(async!=undefined){
+                            xmlHttp.open("GET",url,async);
+                        }else{
+                            xmlHttp.open("GET",url);
+                        }
+                        xmlHttp.send(data);
+                        xmlHttp.onreadystatechange = function() {
+                            if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) {
+                                fn(xmlHttp.responseText);
+                            } else {
+                                erfn();
+                            }
+                        }
+                    }else if(type ==="post"){
+                        createxmlHttpRequest();
+                        xmlHttp.open("POST",url,async);
+                        xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+                        xmlHttp.send(data);
+                        xmlHttp.onreadystatechange = function() {
+                            if ((xmlHttp.readyState == 4) && (xmlHttp.status == 200)) {
+                                fn(xmlHttp.responseText)
+                            } else {
+                                erfn();
+                            }
+                        }
                     }
                 },
                 attr : function(temp){
